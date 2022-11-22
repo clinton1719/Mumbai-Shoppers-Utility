@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head th:fragment="page_head(title)">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+<title>[[${title}]]</title>
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+
+<script type="text/javascript" th:src="@{/js/common.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</head>
+<body>
+	<th th:fragment="column_link(fieldName, columnLabel, removeTag)"
+		th:remove="${removeTag}" class="text-center"><a
+			class="text-black"
+			th:href="@{/users/page/{currentPage}?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(currentPage=${currentPage}, sortField=${fieldName}, sortDir=${sortField != fieldName ? 'asc' : reverseSortDir}, keyword=${keyword==null ? '' : keyword})}">
+			[[${columnLabel}]]</a> <span th:if="${sortField == fieldName}"
+		th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span></th>
+
+	<div th:fragment="footer">
+		<p class="text-center m-3 p-3 text-white"
+			style="background-color: rgba(0, 0, 0, 0.2)">
+			<em>Mumbai Shoppers - Copyright &copy;Mshoppers</em>
+		</p>
+	</div>
+
+	<!-- Warning and Success pop-ups -->
+	<div class="modal fade text-center" id="modalDialog" th:fragment="pop-up">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header text-center"
+					style="background-color: #2fa5fa !important; color: white">
+					<h4 class="modal-title" id="modalTitleGeneral"></h4>
+				</div>
+
+				<div class="modal-body">
+					<span id="modalBody"></span>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-danger btn-lg"
+						aria-pressed="true" data-bs-dismiss="modal"
+						style="border-color: #2fa5fa !important;">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

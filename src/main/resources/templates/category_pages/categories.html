@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle})" />
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+
+		<br>
+
+		<div>
+			<h2>Manage Categories</h2>
+			<br>
+			<a th:href="@{/categories/new}" title="Create New Category"
+				class="fas fa-user-plus fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true"></a>
+			&nbsp;&nbsp;
+			<a th:href="@{/categories/export/csv}" title="Export to CSV"
+				class="fas fa-file-csv fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true">
+				&nbsp;&nbsp; </a>
+		</div>
+
+		<br>
+
+		<div>
+			<form th:action="@{/categories/page/1}"
+				class="form-inline d-flex flex-row">
+
+				<input type="hidden" name="sortField" th:value="${sortField}">
+				<input type="hidden" name="sortDir" th:value="${sortDir}">
+				<input type="search" name="keyword" class="form-control col-3"
+					required style="max-width: 250px;" th:value="${keyword}"
+					placeholder="Search for categories">
+				&nbsp;&nbsp;
+				<button type="submit" title="Search"
+					class="btn btn-outline-primary btn-sm"
+					style="border-color: #2fa5fa !important;" aria-pressed="true">
+					<i class="fas fa-search fa-2x icon-dark"></i>
+				</button>
+				&nbsp;&nbsp;
+				<button type="button" class="btn btn-outline-danger btn-sm"
+					title="Clear" aria-pressed="true"
+					style="border-color: #2fa5fa !important;" onClick="clearFilter()">
+					<i class="fas fa-eraser fa-2x icon-dark"></i>
+				</button>
+			</form>
+		</div>
+
+		<br>
+
+		<div class="full-details">
+			<table
+				class="table table-responsive-xl table-striped table-bordered primary-color-background">
+				<thead class="secondary-color-background">
+					<tr>
+						<th class="text-center">Category ID</th>
+
+						<th class="text-center">Category Image</th>
+
+						<th class="text-center"><a class="text-black"
+								th:href="@{/categories/page/1?sortDir={sortDir}&sortField={sortField}&keyword={keyword}(sortDir = ${sortDir}, sortField = 'name', keyword = ${keyword == null ? '' : keyword})}">Category
+								Name</a> <span th:if="${sortField == 'name'}"
+							th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span></th>
+
+						<th class="hideable-column text-center"><a class="text-black"
+								th:href="@{/categories/page/1?sortDir={sortDir}&sortField={sortField}&keyword={keyword}(sortDir = ${sortDir}, sortField = 'alias', keyword = ${keyword == null ? '' : keyword})}">Alias</a><span
+							th:if="${sortField == 'alias'}"
+							th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span></th>
+
+						<th class="text-center">Enabled Status</th>
+
+						<th class="text-center">Edit</th>
+
+						<th class="text-center">Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="category : ${categories}">
+						<td class="text-center">[[${category.id}]]</td>
+						<td class="text-center"><img
+								alt="photo" th:src="@{${category.CategoryImagePath}}"
+								style="max-width: 100px; max-height: 200px;"></td>
+						<td class="text-center">[[${category.nameInDropDown}]]</td>
+						<td class="hideable-column text-center">[[${category.alias}]]</td>
+						<td class="text-center"><a
+								th:if="${category.isEnabled == true}"
+								th:href="@{/category/changestatus/false/{id}(id=${category.id})}"
+								class="fa-solid fa-check fa-2x text-success"
+								title="Disable this User"></a> <a
+								th:if="${category.isEnabled == false}"
+								th:href="@{/category/changestatus/true/{id}(id=${category.id})}"
+								class="fa-solid fa-xmark fa-2x text-danger"
+								title="Enable this User"></a></td>
+						<td class="text-center"><a
+								th:href="@{/category/edit/{id}(id=${category.id})}"
+								class="fa-solid fa-user-pen fa-2x icon-secondary"
+								title="Edit this category"></a></td>
+						<td class="text-center"><a
+								th:categoryIdDelete="${category.id}"
+								th:categoryName="${category.name}"
+								th:if="${category.hasChildren == false}"
+								class="fa-solid fa-trash-can fa-2x text-danger link-delete make-hand-cursor"
+								title="Delete this user"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<!-- For Smaller screens -->
+			<div class="less-details">
+				<div th:each="category : ${categories}" class="row m-1">
+					<div class="col-4">
+						<span th:if="${category.image == null}"
+							class="fas fa-portrait fa-2x icon-secondary"></span>
+						<img th:if="${category.image!= null}" alt="photo"
+							th:src="@{${category.CategoryImagePath}}"
+							style="max-width: 100px; max-height: 200px;">
+					</div>
+					<div class="col-8">
+						<div>[[${category.nameInDropDown}]]</div>
+						<div clas="mt-2">
+							<a th:if="${category.isEnabled == true}"
+								th:href="@{/category/changestatus/false/{id}(id=${category.id})}"
+								class="fa-solid fa-check fa-2x text-success"
+								title="Disable this Category"></a>
+							<a th:if="${category.isEnabled == false}"
+								th:href="@{/category/changestatus/true/{id}(id=${category.id})}"
+								class="fa-solid fa-xmark fa-2x text-danger"
+								title="Enable this Category"></a>
+							&nbsp;&nbsp;
+							<a th:href="@{/category/edit/{id}(id=${category.id})}"
+								class="fa-solid fa-user-pen fa-2x icon-secondary"
+								title="Edit this category"></a>
+							&nbsp;&nbsp;
+							<a th:categoryIdDelete="${category.id}"
+								th:categoryName="${category.name}"
+								th:if="${category.hasChildren == false}"
+								class="fa-solid fa-trash-can fa-2x text-danger link-delete make-hand-cursor"
+								title="Delete this Category"></a>
+							&nbsp;&nbsp;
+						</div>
+					</div>
+					<div>&nbsp;</div>
+				</div>
+			</div>
+			
+			<div class="modal fade text-center" id="deleteDialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header text-center bg-danger"
+							style="color: white">
+							<h4 class="modal-title" id="modalTitle">Please Confirm</h4>
+						</div>
+
+						<div class="modal-body">
+							<span id="modalBodyDelete"></span>
+						</div>
+
+						<div class="modal-footer">
+							<a type="button" class="btn btn-outline-danger btn-lg"
+								style="border-color: #2fa5fa !important;" aria-pressed="true"
+								id="deleteCategoryButton">Yes</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" data-bs-dismiss="modal"
+								class="btn btn-outline-primary btn-lg" aria-pressed="true"
+								style="border-color: #2fa5fa !important;">No</button>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<br>
+
+			<!-- 		Pagination -->
+			<div class="text-center m-1"
+				th:if="${totalCount>0 && startCount<totalCount}">
+				<span>Showing Parent categories and their sub categories from
+					[[${startCount}]] to [[${endCount}]] of [[${totalCount}]]
+					categories</span>
+			</div>
+
+			<div class="text-center m-1"
+				th:if="${totalCount==0 || startCount>totalCount}">
+				<span>No categories found!</span>
+			</div>
+
+			<br>
+
+			<div th:if="${totalPages>1}">
+				<nav aria-label="Page navigation example">
+					<ul class="pagination justify-content-center flex-wrap">
+
+						<li class="page-item">
+							<a class="page-link"
+								th:href="@{/categories/page/1/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}"
+								id="firstPageButton">First</a>
+						</li>
+
+						<li class="page-item" th:if="${currentPage > 1}">
+							<a class="page-link" id="previousPageButton"
+								th:href="@{/categories/page/{previous}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(previous = ${currentPage-1 == 0 ? currentPage : currentPage-1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">Previous</a>
+						</li>
+
+						<li
+							th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+							th:each="i : ${#numbers.sequence(1, totalPages)}">
+							<a class="page-link"
+								th:href="@{/categories/page/{i}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(i=${i}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">[[${i}]]</a>
+						</li>
+
+						<li class="page-item" th:if="${currentPage < totalPages}">
+							<a class="page-link" id="nextPageButton"
+								th:href="@{/categories/page/{next}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(next = ${currentPage+1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">Next</a>
+						</li>
+
+						<li class="page-item">
+							<a class="page-link"
+								th:href="@{/categories/page/{last}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(last=${totalPages}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}"
+								id="lastPageButton">Last</a>
+						</li>
+
+					</ul>
+				</nav>
+			</div>
+
+
+			<div th:replace="fragments :: pop-up"></div>
+
+
+			<div th:replace="fragments :: footer"></div>
+
+		<script>
+			/* General dialog box for saving, updating user not found etc */
+			flag = "[[${message}]]";
+			window.onload = function() {
+				if (flag != "") {
+					showSuccessMessage();
+					setTimeout(function() {
+						$("#modalDialog").modal('hide');
+					}, 3000);
+				} else {
+
+				}
+
+			};
+
+			function showSuccessMessage() {
+				$("#modalTitleGeneral").text("[[${modalTitle}]]");
+				$("#modalBody").text(flag);
+				$("#modalDialog").modal('show');
+			}
+
+			function clearFilter() {
+				window.location = "[[@{/categories}]]";
+			};
+
+			/* For deleting Categories */
+			$(document).ready(
+					function() {
+						$(".link-delete").on(
+								"click",
+								function() {
+									var location = "[[@{/categories/delete/}]]"
+											+ $(this).attr("categoryIdDelete");
+									$("#deleteCategoryButton").attr("href",
+											location);
+									$("#modalBodyDelete").text(
+											"Do you want to delete category "
+													+ $(this).attr(
+															"categoryName")
+													+ " ?");
+									$("#deleteDialog").modal("show");
+
+								});
+					});
+		</script>
+</body>
+</html>

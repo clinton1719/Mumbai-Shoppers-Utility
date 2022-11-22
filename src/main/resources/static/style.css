@@ -1,0 +1,59 @@
+*.icon-white {
+	color: white
+}
+
+*.icon-silver {
+	color: silver
+}
+
+*.icon-dark {
+	color: gray
+}
+
+*.icon-primary {
+	color: #e3f2fd 
+}
+
+*.icon-secondary {
+	color: #2fa5fa 
+}
+
+*.primary-color-background {
+	background-color: #e3f2fd;
+}
+
+*.secondary-color-background {
+	background-color: #2fa5fa;
+}
+
+*.make-hand-cursor {
+	cursor: pointer
+}
+
+*.a-disabled {
+    display: none;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+	/* small screen */
+	div.full-details {display: none}
+	div.less-details {display: block}
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px){
+	/* medium screen */
+	div.full-details {display: block}
+	div.less-details {display: none}
+	.hideable-column {display: none}
+}
+
+@media screen and (min-width: 1024px) {
+	/* large screen */
+	div.less-details {display: none}
+	.hideable-column {display: table-cell;}
+}
+
+.dropdown:hover {
+    cursor: pointer;
+}

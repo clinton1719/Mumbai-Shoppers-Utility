@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle})" />
+<body>
+
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+
+		<br>
+
+		<div>
+			<h2>Manage Users</h2>
+			<br>
+			<a th:href="@{/users/new}" title="Create New User"
+				class="fas fa-user-plus fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true"></a>
+			&nbsp;&nbsp;
+			<a th:href="@{/users/export/csv}" title="Export to CSV"
+				class="fas fa-file-csv fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true">
+				&nbsp;&nbsp; </a>
+			&nbsp;
+			<a th:href="@{/users/export/excel}" title="Export to Excel"
+				class="fas fa-file-excel fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true">
+				&nbsp;&nbsp; </a>
+			&nbsp;
+			<a th:href="@{/users/export/pdf}" title="Export to PDF"
+				class="fas fa-file-pdf fa-2x icon-dark"
+				style="border-color: #2fa5fa !important;" aria-pressed="true">&nbsp;&nbsp;
+			</a>
+		</div>
+
+		<br>
+
+		<div>
+			<form th:action="@{/users/page/1}"
+				class="form-inline d-flex flex-row">
+
+				<input type="hidden" name="sortField" th:value="${sortField}">
+				<input type="hidden" name="sortDir" th:value="${sortDir}">
+				<input type="search" name="keyword" class="form-control col-3"
+					required style="max-width: 250px;" th:value="${keyword}"
+					placeholder="Search for name/email/ID">
+				&nbsp;&nbsp;
+				<button type="submit" title="Search"
+					class="btn btn-outline-primary btn-sm"
+					style="border-color: #2fa5fa !important;" aria-pressed="true">
+					<i class="fas fa-search fa-2x icon-dark"></i>
+				</button>
+				&nbsp;&nbsp;
+				<button type="button" class="btn btn-outline-danger btn-sm"
+					title="Clear" aria-pressed="true"
+					style="border-color: #2fa5fa !important;" onClick="clearFilter()">
+					<i class="fas fa-eraser fa-2x icon-dark"></i>
+				</button>
+			</form>
+		</div>
+
+		<br>
+
+		<div class="full-details">
+			<table
+				class="table table-responsive-xl table-striped table-bordered primary-color-background">
+				<thead class="secondary-color-background">
+					<tr>
+						<th class="hideable-column text-center">
+						<th th:replace="fragments :: column_link('id', 'User ID', 'tag')" />
+						</th>
+
+						<th class="text-center">Photos</th>
+
+						<th class="hideable-column text-center">
+						<th
+							th:replace="fragments :: column_link('email', 'E-mail', 'tag')" />
+						</th>
+
+						<th
+							th:replace="fragments :: column_link('firstName', 'First Name', 'none')" />
+
+						<th
+							th:replace="fragments :: column_link('lastName', 'Last Name', 'none')" />
+
+						<th class="text-center">Roles</th>
+
+						<th class="text-center">Enabled Status</th>
+
+						<th class="text-center">Edit</th>
+
+						<th class="text-center">Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${userList}">
+						<td class="hideable-column text-center">[[${user.id}]]</td>
+						<td class="text-center"><img alt="photo"
+								th:src="@{${user.UserPhotoPath}}"
+								style="max-width: 100px; max-height: 200px;"></td>
+						<td class="hideable-column text-center">[[${user.email}]]</td>
+						<td class="text-center">[[${user.firstName}]]</td>
+						<td class="text-center">[[${user.lastName}]]</td>
+						<td class="text-center">[[${user.roles}]]</td>
+						<td class="text-center"><a th:if="${user.enabled == true}"
+								th:href="@{/users/changestatus/false/{id}(id=${user.id})}"
+								class="fa-solid fa-check fa-2x text-success"
+								title="Disable this User"></a> <a
+								th:if="${user.enabled == false}"
+								th:href="@{/users/changestatus/true/{id}(id=${user.id})}"
+								class="fa-solid fa-xmark fa-2x text-danger"
+								title="Enable this User"></a></td>
+						<td class="text-center"><a
+								th:href="@{/users/edit/{id}(id=${user.id})}"
+								class="fa-solid fa-user-pen fa-2x icon-secondary"
+								title="Edit this user"></a></td>
+						<td class="text-center"><a th:userIdDelete="${user.id}"
+								class="fa-solid fa-trash-can fa-2x text-danger link-delete make-hand-cursor"
+								title="Delete this user"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- For Smaller screens -->
+		<div class="less-details">
+			<div th:each="user : ${userList}" class="row m-1">
+				<div class="col-4">
+					<span th:if="${user.photos == null}"
+						class="fas fa-portrait fa-2x icon-secondary"></span>
+					<img th:if="${user.photos != null}" alt="photo"
+						th:src="@{${user.UserPhotoPath}}"
+						style="max-width: 100px; max-height: 200px;">
+				</div>
+				<div class="col-8">
+					<div>[[${user.fullName}]]</div>
+					<div>[[${user.roles}]]</div>
+					<div clas="mt-2">
+						<a th:if="${user.enabled == true}"
+							th:href="@{/users/changestatus/false/{id}(id=${user.id})}"
+							class="fa-solid fa-check fa-2x text-success"
+							title="Disable this User"></a>
+						<a th:if="${user.enabled == false}"
+							th:href="@{/users/changestatus/true/{id}(id=${user.id})}"
+							class="fa-solid fa-xmark fa-2x text-danger"
+							title="Enable this User"></a>
+						&nbsp;&nbsp;
+						<a th:href="@{/users/edit/{id}(id=${user.id})}"
+							class="fa-solid fa-user-pen fa-2x icon-secondary"
+							title="Edit this user"></a>
+						&nbsp;&nbsp;
+						<a th:userIdDelete="${user.id}"
+							class="fa-solid fa-trash-can fa-2x text-danger link-delete make-hand-cursor"
+							title="Delete this user"></a>
+						&nbsp;&nbsp;
+					</div>
+				</div>
+				<div>&nbsp;</div>
+			</div>
+		</div>
+
+		<br>
+
+		<!-- 		Pagination -->
+		<div class="text-center m-1"
+			th:if="${totalCount>0 && startCount<totalCount}">
+			<span>Showing users from ID [[${startCount}]] to
+				[[${endCount}]] of [[${totalCount}]] users</span>
+		</div>
+
+		<div class="text-center m-1"
+			th:if="${totalCount==0 || startCount>totalCount}">
+			<span>No users found!</span>
+		</div>
+
+		<br>
+
+		<div th:if="${totalPages>1}">
+			<nav aria-label="Page navigation example">
+				<ul class="pagination justify-content-center flex-wrap">
+
+					<li class="page-item">
+						<a class="page-link"
+							th:href="@{/users/page/1/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}"
+							id="firstPageButton">First</a>
+					</li>
+
+					<li class="page-item">
+						<a class="page-link" id="previousPageButton"
+							th:href="@{/users/page/{previous}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(previous = ${currentPage-1 == 0 ? currentPage : currentPage-1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">Previous</a>
+					</li>
+
+					<li
+						th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+						th:each="i : ${#numbers.sequence(1, totalPages)}">
+						<a class="page-link"
+							th:href="@{/users/page/{i}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(i=${i}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">[[${i}]]</a>
+					</li>
+
+					<li class="page-item">
+						<a class="page-link" id="nextPageButton"
+							th:href="@{/users/page/{next}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(next = ${currentPage+1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}">Next</a>
+					</li>
+
+					<li class="page-item">
+						<a class="page-link"
+							th:href="@{/users/page/{last}/?sortField={sortField}&sortDir={sortDir}&keyword={keyword}(last=${totalPages}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword==null ? '' : keyword})}"
+							id="lastPageButton">Last</a>
+					</li>
+
+				</ul>
+			</nav>
+		</div>
+
+		<div th:replace="fragments :: pop-up"></div>
+
+		<div class="modal fade text-center" id="deleteDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header text-center bg-danger"
+						style="color: white">
+						<h4 class="modal-title" id="modalTitle">Please Confirm</h4>
+					</div>
+
+					<div class="modal-body">
+						<span id="modalBodyDelete"></span>
+					</div>
+
+					<div class="modal-footer">
+						<a type="button" class="btn btn-outline-danger btn-lg"
+							style="border-color: #2fa5fa !important;" aria-pressed="true"
+							id="deleteUserButton">Yes</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button type="button" data-bs-dismiss="modal"
+							class="btn btn-outline-primary btn-lg" aria-pressed="true"
+							style="border-color: #2fa5fa !important;">No</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div th:replace="fragments :: footer"></div>
+
+	</div>
+
+	<script>
+		/* General dialog box for saving, updating user not found etc */
+		flag = "[[${message}]]";
+		window.onload = function() {
+			if (flag != "") {
+				showSuccessMessage();
+				setTimeout(function() {
+					$("#modalDialog").modal('hide');
+				}, 3000);
+			} else {
+
+			}
+
+			var checkCurrentPage = "[[${currentPage}]]";
+			var lastPage = "[[${totalCount}]]";
+			if (checkCurrentPage == 1) {
+				$("#previousPageButton").addClass("a-disabled");
+				$("#firstPageButton").addClass("a-disabled");
+			} else if ("[[${endCount}]]" == lastPage) {
+				$("#nextPageButton").addClass("a-disabled");
+				$("#lastPageButton").addClass("a-disabled");
+			}
+		};
+
+		function showSuccessMessage() {
+			$("#modalTitleGeneral").text("[[${modalTitle}]]");
+			$("#modalBody").text(flag);
+			$("#modalDialog").modal('show');
+		}
+
+		/* For Deleting User */
+		$(document).ready(
+				function() {
+					$(".link-delete").on(
+							"click",
+							function() {
+								var loc = "[[@{/users/delete/}]]"
+										+ $(this).attr("userIdDelete");
+								$("#deleteUserButton").attr("href", loc);
+								$("#modalBodyDelete").text(
+										"Do you want to delete user with user ID: "
+												+ $(this).attr("userIdDelete")
+												+ "?");
+								$("#deleteDialog").modal('show');
+							})
+				});
+
+		function clearFilter() {
+			window.location = "[[@{/users}]]";
+		};
+	</script>
+
+</body>
+</html>
