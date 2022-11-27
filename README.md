@@ -1,4 +1,4 @@
-# Mumbai-Shoppers-Utility
+# Mumbai-Shoppers-Utility -Hosted on **AWS** using Elastic Beanstalk & RDS
 A utility to store and maintain users and categories for shopping purposes. It has the following features:
 
 * **Authorization  & Authentication**
