@@ -23,6 +23,9 @@ A utility to store and maintain users and categories for shopping purposes. It h
 
 Access the website here: [Mshoppers AWS hosted website](http://mshoppers-env.eba-khhgzqpn.ap-south-1.elasticbeanstalk.com/MshoppersAdmin)
 
+Email: clinton@test.com
+Password: clintontest
+
 ![image](https://user-images.githubusercontent.com/26666327/203265579-33cf754f-d714-40cf-9561-3e2aee46365d.png)
 
 
